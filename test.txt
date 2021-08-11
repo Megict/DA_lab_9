@@ -1,0 +1,85 @@
+5 4
+2 3
+1 3
+2 1
+4 5
+
+20 20
+19 1
+1 5
+1 2
+5 3
+4 3
+1 4
+7 6
+18 6
+8 6
+13 14
+7 18
+8 20
+11 12
+14 12
+11 14
+15 11
+16 17
+9 10
+16 11
+4 5
+
+
+
+int rad(int digit, int pos) {
+    int del = pow(10, pos);
+    int dif = pow(10, pos - 1);
+
+    if (digit % dif == digit) {
+        return -1;
+    }
+
+    int res = (digit % del) / dif;
+    return res;
+}
+
+std::vector<int> radixSort(std::vector<int> input) { //чекнул, реально линейное
+    std::vector<int> prom(input.size());
+    int countArr[11];
+    for (int i = 0; i < 11; ++i)
+        countArr[i] = 0;
+
+    int digit = 1;
+
+    while (countArr[0] != input.size()) {
+
+
+        for (int i = 0; i < 11; ++i)
+            countArr[i] = 0;
+
+        for (int i = 0; i < input.size(); ++i) {
+            countArr[rad(input[i], digit) != -1 ? rad(input[i], digit) + 1 : 0] += 1;
+        }
+
+        int k = 0;
+        int flp = 0;
+        for (int i = 0; i < 11; ++i) {
+            k = countArr[i];
+            countArr[i] = flp;
+            flp = k;
+        }
+        for (int i = 2; i < 11; ++i) {
+            countArr[i] += countArr[i - 1];
+        }
+
+        for (int i = 0; i < input.size(); ++i) {
+            int rdn = rad(input[i], digit);
+            prom[countArr[rdn != -1 ? rdn + 1 : 0]] = input[i];
+            countArr[rdn != -1 ? rdn + 1 : (0)] ++;
+        }
+
+        input = prom;
+        prom = std::vector<int>(input.size());
+
+        digit++;
+    }
+
+    return(input);
+}
